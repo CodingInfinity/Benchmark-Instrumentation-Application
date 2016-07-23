@@ -4,14 +4,14 @@
  * DO NOT EDIT UNLESS YOU ARE SURE THAT YOU KNOW WHAT YOU ARE DOING
  *  @generated
  */
-#include "message_constants.h"
+#include "../include/message_constants.h"
 
-namespace com { namespace codinginfinity { namespace benchmark { namespace management { namespace messages {
+namespace com { namespace codinginfinity { namespace benchmark { namespace management { namespace thrift { namespace messages {
 
 const messageConstants g_message_constants;
 
 messageConstants::messageConstants() {
 }
 
-}}}}} // namespace
+}}}}}} // namespace
 

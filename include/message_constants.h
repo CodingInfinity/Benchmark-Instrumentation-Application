@@ -9,7 +9,7 @@
 
 #include "message_types.h"
 
-namespace com { namespace codinginfinity { namespace benchmark { namespace management { namespace messages {
+namespace com { namespace codinginfinity { namespace benchmark { namespace management { namespace thrift { namespace messages {
 
 class messageConstants {
  public:
@@ -19,6 +19,6 @@ class messageConstants {
 
 extern const messageConstants g_message_constants;
 
-}}}}} // namespace
+}}}}}} // namespace
 
 #endif
