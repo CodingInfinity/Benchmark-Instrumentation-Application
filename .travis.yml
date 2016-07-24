@@ -1,0 +1,18 @@
+# Build Benchmark Instrumentation Application on Travis CI - https://travis-ci.org/
+
+language: cpp
+
+sudo: required
+
+cache:
+  - apt
+
+compiler:
+  - gcc
+
+before_install:
+  - sh build/travis/installCXXDependencies.sh
+  - sh build/travis/installDependencies.sh 1> /dev/null
+
+script:
+  - mkdir cmake_build && cd cmake_build && cmake ..
