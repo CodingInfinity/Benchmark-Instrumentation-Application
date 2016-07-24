@@ -38,7 +38,7 @@ else()
 endif()
 
 # Google Snappy
-message (STATUS "** Searching for Apache Thrift")
+message (STATUS "** Searching for Google Snappy")
 find_library(SNAPPY_LIBRARIES snappy)
 if (NOT SNAPPY_LIBRARIES)
     set(SNAPPY_FOUND "Not found")
@@ -86,4 +86,4 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file (GLOB SOURCE_FILES "src/*.cpp")
 add_executable (Instrumentation ${SOURCE_FILES})
-target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} )
+target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} ${SNAPPY_LIBRARIES} )
