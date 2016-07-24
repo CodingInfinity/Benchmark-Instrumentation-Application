@@ -12,8 +12,8 @@ and not using the underlying systems package manager
   * Apache Qpid Proton
   * Apache Qpid CPP with AMQP version 1.0 (Requires Apache Qpid Proton)
   * Apache Thrift C++ binding
-  * Google Snappy
   * Hyperic SIGAR
+  * libarchive
 
 **For all dependencies listed below please refer to relevant documentation for building dependency in question such
 as required dependencies etc.**
@@ -45,18 +45,18 @@ as required dependencies etc.**
     $ make
     $ make install
 
-### Google Snappy
-    $ git clone https://github.com/adasworks/snappy-cmake.git
-    $ cd snappy-cmake
+### Hyperic SIGAR
+    $ git clone https://github.com/hyperic/sigar.git
+    $ cd siger
     $ mkdir cmake-build
     $ cd cmake build
     $ cmake ..
     $ make
     $ make install
 
-### Hyperic SIGAR
-    $ git clone https://github.com/hyperic/sigar.git
-    $ cd siger
+### libarchive
+    $ git clone https://github.com/libarchive/libarchive.git
+    $ cd libarchive
     $ mkdir cmake-build
     $ cd cmake build
     $ cmake ..

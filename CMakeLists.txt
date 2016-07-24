@@ -37,15 +37,6 @@ else()
     set(THRIFT_FOUND "Found")
 endif()
 
-# Google Snappy
-message (STATUS "** Searching for Google Snappy")
-find_library(SNAPPY_LIBRARIES snappy)
-if (NOT SNAPPY_LIBRARIES)
-    set(SNAPPY_FOUND "Not found")
-else()
-    set(SNAPPY_FOUND "Found")
-endif()
-
 # Hyperic Sigar
 message (STATUS "** Searching for Hyperic SIGAR")
 find_library(SIGAR_LIBRARIES sigar)
@@ -53,6 +44,15 @@ if (NOT SIGAR_LIBRARIES)
     set(SIGAR_FOUND "Not found")
 else()
     set(SIGAR_FOUND "Found")
+endif()
+
+# libarchive
+message (STATUS "** Searching for libarchive")
+find_package(LibArchive)
+if (NOT LibArchive_FOUND )
+    set(LIBARCHIVE_FOUND "Not found")
+else()
+    set(LIBARCHIVE_FOUND "Found")
 endif()
 
 # Boost libraries
@@ -71,8 +71,8 @@ message (STATUS "  Dependencies")
 message (STATUS "    Apache Proton      :     ${PROTON_FOUND}")
 message (STATUS "    Apache Qpid        :     ${QPID_FOUND}")
 message (STATUS "    Apache Thrift      :     ${THRIFT_FOUND}")
-message (STATUS "    Google Snappy      :     ${SNAPPY_FOUND}")
 message (STATUS "    Hyperic SIGAR      :     ${SIGAR_FOUND}")
+message (STATUS "    libarchive         :     ${LIBARCHIVE_FOUND}")
 message (STATUS "    Boost")
 message (STATUS "      Root             :     ${BOOST_ROOT}")
 message (STATUS "      Include Path     :     ${Boost_INCLUDE_DIR}")
