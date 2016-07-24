@@ -16,7 +16,7 @@ mkdir cmake_build
 cd cmake_build
 cmake ..
 make all
-make install
+sudo make install
 
 # Setup Apache qpid CPP
 QPID_TEMP_DIRECTORY="$(mktemp -d)"
@@ -27,7 +27,7 @@ mkdir cmake_build
 cd cmake_build
 make ..
 make all
-make install
+sudo make install
 
 # Setup Apache Thrift
 THRIFT_TEMP_DIRECTORY="$(mktemp -d)"
@@ -38,7 +38,7 @@ mkdir cmake_build
 cd cmake_build
 cmake ..
 make
-make install
+sudo make install
 
 # Setup Hyperic SIGAR
 SIGAR_TEMP_DIRECTORY="$(mktemp -d)"
@@ -49,7 +49,7 @@ mkdir cmake_build
 cd cmake_build
 cmake ..
 make
-make install
+sudo make install
 
 # Setup libarchive
 LIBARCHIVE_TEMP_DIRECTORY="$(mktemp -d)"
@@ -60,4 +60,4 @@ mkdir cmake_build
 cd cmake_build
 cmake ..
 make
-make install
+sudo make install
