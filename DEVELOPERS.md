@@ -20,18 +20,20 @@ as required dependencies etc.**
 
 ### Apache Qpid Proton
     $ git clone git://git.apache.org/qpid-proton.git
-    $ cd qpid
+    $ cd qpid-proton
     $ mkdir cmake-build
-    $ cd cmake build
+    $ cd cmake-build
     $ cmake ..
     $ make all
     $ make install
+    
+#### Dependancies for Apache Qpid Proton can be found at https://github.com/apache/qpid-proton/blob/master/INSTALL.md
 
 ### Apache Qpid CPP
     $ git clone git://git.apache.org/qpid-cpp.git
     $ cd qpid-cpp
     $ mkdir cmake-build
-    $ cd cmake build
+    $ cd cmake-build
     $ cmake ..
     $ make all
     $ make install
@@ -40,7 +42,7 @@ as required dependencies etc.**
     $ git clone git://git.apache.org/thrift.git
     $ cd thrift
     $ mkdir cmake-build
-    $ cd cmake build
+    $ cd cmake-build
     $ cmake ..
     $ make
     $ make install
@@ -49,7 +51,7 @@ as required dependencies etc.**
     $ git clone https://github.com/hyperic/sigar.git
     $ cd siger
     $ mkdir cmake-build
-    $ cd cmake build
+    $ cd cmake-build
     $ cmake ..
     $ make
     $ make install
@@ -58,7 +60,7 @@ as required dependencies etc.**
     $ git clone https://github.com/libarchive/libarchive.git
     $ cd libarchive
     $ mkdir cmake-build
-    $ cd cmake build
+    $ cd cmake-build
     $ cmake ..
     $ make
     $ make install
