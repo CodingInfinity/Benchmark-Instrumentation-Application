@@ -1,4 +1,4 @@
- #Version Control
+# Version Control
 This repository has adopted the [git flow branching model](http://nvie.com/posts/a-successful-git-branching-model/).
 The creators of git flow released a [short intro video](http://vimeo.com/16018419) to explain the model.
 
