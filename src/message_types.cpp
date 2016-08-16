@@ -414,7 +414,7 @@ Measurement::~Measurement() throw() {
 }
 
 
-void Measurement::__set_timestamp(const int64_t val) {
+void Measurement::__set_timestamp(const int32_t val) {
   this->timestamp = val;
 }
 
@@ -444,8 +444,8 @@ uint32_t Measurement::read(::apache::thrift::protocol::TProtocol* iprot) {
     switch (fid)
     {
       case 1:
-        if (ftype == ::apache::thrift::protocol::T_I64) {
-          xfer += iprot->readI64(this->timestamp);
+        if (ftype == ::apache::thrift::protocol::T_I32) {
+          xfer += iprot->readI32(this->timestamp);
           this->__isset.timestamp = true;
         } else {
           xfer += iprot->skip(ftype);
@@ -476,8 +476,8 @@ uint32_t Measurement::write(::apache::thrift::protocol::TProtocol* oprot) const 
   apache::thrift::protocol::TOutputRecursionTracker tracker(*oprot);
   xfer += oprot->writeStructBegin("Measurement");
 
-  xfer += oprot->writeFieldBegin("timestamp", ::apache::thrift::protocol::T_I64, 1);
-  xfer += oprot->writeI64(this->timestamp);
+  xfer += oprot->writeFieldBegin("timestamp", ::apache::thrift::protocol::T_I32, 1);
+  xfer += oprot->writeI32(this->timestamp);
   xfer += oprot->writeFieldEnd();
 
   xfer += oprot->writeFieldBegin("value", ::apache::thrift::protocol::T_I32, 2);

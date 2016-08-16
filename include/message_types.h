@@ -205,12 +205,12 @@ class Measurement : public virtual ::apache::thrift::TBase {
   }
 
   virtual ~Measurement() throw();
-  int64_t timestamp;
+  int32_t timestamp;
   int32_t value;
 
   _Measurement__isset __isset;
 
-  void __set_timestamp(const int64_t val);
+  void __set_timestamp(const int32_t val);
 
   void __set_value(const int32_t val);
 
