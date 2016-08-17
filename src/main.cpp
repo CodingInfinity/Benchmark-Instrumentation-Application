@@ -17,6 +17,8 @@
 
 #include "message_constants.h"
 #include <libltdl/lt_system.h>
+#include <MeasurementType.h>
+#include <WallClockMeasurementType.h>
 #include "untar.h"
 
 const int BACKLOG_SIZE = 1;
@@ -114,17 +116,20 @@ int main(int argc, char** argv) {
 
                     // Get type of Job
                     // Switch on type of job
+                    MeasurementType *measurementType;
                     switch (job.measurementType) {
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::CPU:
-                            measurement_CPU(child_process_id);
+                            measurementType = new WallClockMeasurementType();
                             break;
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::MEM:
-                            measurement_MEMORY(child_process_id);
+                            measurementType = new WallClockMeasurementType();
                             break;
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::TIME:
                             measurement_TIME(child_process_id);
                             break;
                     }
+                    delete(measurementType);
+                    measurementType = NULL;
                 }
             }catch (const std::exception& error) {
                 std::cerr << error.what() << std::endl;
@@ -136,41 +141,5 @@ int main(int argc, char** argv) {
 		std::cerr << error.what() << std::endl;
 		connection.close();
 		return 1;
-	}
-}
-
-/**
- * ToDo: Look at using Strategy design pattern to handle the measurement of job
- */
-void measurement_CPU(pid_t process_id) {
-
-	// Every specified interval, probe for measurement and add to results structure, while also monitoring if user
-	// process is still active.
-	// When user process exits, push result structure onto queue
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::seconds(30));
-        return;
-	}
-}
-
-void measurement_MEMORY(pid_t process_id) {
-
-	// Every specified interval, probe for measurement and add to results structure, while also monitoring if user
-	// process is still active.
-	// When user process exits, push result structure onto queue
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::seconds(30));
-        return;
-	}
-}
-
-void measurement_TIME(pid_t proccess_id) {
-
-	// Every specified interval, probe for measurement and add to results structure, while also monitoring if user
-	// process is still active.
-	// When user process exits, push result structure onto queue
-	while (true) {
-		std::this_thread::sleep_for(std::chrono::seconds(30));
-        return;
 	}
 }
