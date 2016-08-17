@@ -85,5 +85,5 @@ message(STATUS "")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file (GLOB SOURCE_FILES "src/*.cpp" "include/*.h")
-add_executable (Instrumentation ${SOURCE_FILES} )
+add_executable (Instrumentation ${SOURCE_FILES} include/MeasurementType.h include/WallClockMeasurementType.h src/WallClockMeasurementType.cpp include/CPUMeasurementType.h include/MemoryMeasurementType.h)
 target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} ${LibArchive_LIBRARIES} )

@@ -151,7 +151,6 @@ void measurement_CPU(pid_t process_id) {
 		std::this_thread::sleep_for(std::chrono::seconds(30));
         return;
 	}
-
 }
 
 void measurement_MEMORY(pid_t process_id) {
