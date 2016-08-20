@@ -6,13 +6,12 @@
 #include "WallClockMeasurementType.h"
 
 std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> 
-        WallClockMeasurementType::measure(
-                com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage){
+        WallClockMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage, std::string location) {
     // Every specified interval, probe for measurement and add to results structure, while also monitoring if user
     // process is still active.
     // When user process exits, push result structure onto queue
 
-    int intVal
+    int intVal;
 
     if(std::chrono::high_resolution_clock::is_steady){
         //if high_resolution_clock is steady use it

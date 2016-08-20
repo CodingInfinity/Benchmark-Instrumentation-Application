@@ -9,7 +9,8 @@
 
 class MemoryMeasurementType : public MeasurementType{
     std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
-            com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage);
+            com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
+            std::string location);
 };
 
 #endif //BENCHMARK_INSTRUMENTATION_APPLICATION_MEMORYMEASUREMENTTYPE_H

@@ -10,7 +10,8 @@
 
 class WallClockMeasurementType : public MeasurementType{
     std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
-            com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage);
+            com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
+            std::string location);
 };
 
 
