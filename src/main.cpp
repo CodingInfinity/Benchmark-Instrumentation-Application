@@ -157,6 +157,22 @@ int main(int argc, char** argv) {
                 resultMessage->jobId = job.jobId;
                 resultMessage->measurements = listOfMeasurements;
 
+                /**
+                 * Serialize message using Apache Thrift binary protocol
+                 */
+
+
+
+
+                /*
+                 * Deallocate memory(Because C++ is fun)
+                 */
+                delete(listOfMeasurements);
+                listOfMeasurements = NULL;
+
+                delete(resultMessage);
+                resultMessage = NULL;
+
                 delete(measurementType);
                 measurementType = NULL;
 
