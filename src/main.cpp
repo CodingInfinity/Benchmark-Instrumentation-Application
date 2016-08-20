@@ -3,6 +3,9 @@
 #include <memory>
 #include <thread>
 #include <unistd.h>
+#include <fstream>
+#include <string>
+
 
 #include <boost/asio.hpp>
 #include <qpid/messaging/Connection.h>
@@ -98,6 +101,43 @@ int main(int argc, char** argv) {
 
 
                 // Build the user's application
+                char pathNameBuffer[MAXPATHLEN];
+                char *path = getcwd(pathNameBuffer, MAXPATHLEN);
+                std::string command = "ls"; //this is just so that the variable has been defined should
+                                            //something go wrong while parsing the makefile
+
+                if(path){
+                    std::string CurrentPath;
+                    CurrentPath = path;
+                    std::cout << "Current path: " << CurrentPath << std::endl;
+                }else{
+                    std::cout << "error on getcwd" << std::endl;
+                }
+
+                if(chdir(location.c_str())){
+                    std::cout << "error on chdir" << std::endl;
+                }else {
+                    //The path has successfully been changed to location
+                    path = getcwd(pathNameBuffer, MAXPATHLEN);
+
+                    if (path) {
+                        std::string CurrentPath;
+                        CurrentPath = path;
+                        std::cout << "Path after switch to location" << CurrentPath << std::endl;
+                    } else {
+                        std::cout << "error on getcwd" << std::endl;
+                    }
+                    system("make");
+
+                    std::ifstream infile("makefile");
+                    std::string command;
+                    while (getline(infile, command)){
+                        if(command == "run:") {
+                            getline(infile, command);
+                            command.erase(0, 1);
+                        }
+                    }
+                }
 
 
 
@@ -129,6 +169,8 @@ int main(int argc, char** argv) {
                             measurementType = new WallClockMeasurementType();
                             break;
                     }
+                    measurementType->measure(job, command);
+
                     delete(measurementType);
                     measurementType = NULL;
                 }
