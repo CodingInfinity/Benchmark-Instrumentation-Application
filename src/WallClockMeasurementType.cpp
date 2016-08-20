@@ -12,6 +12,8 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
     // process is still active.
     // When user process exits, push result structure onto queue
 
+    int intVal
+
     if(std::chrono::high_resolution_clock::is_steady){
         //if high_resolution_clock is steady use it
 
@@ -28,7 +30,7 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
 
         std::chrono::duration<int, std::milli> durationAsIntergerMilliseconds = end_ms - start_ms;
 
-        int intVal = durationAsIntergerMilliseconds.count();
+        intVal = durationAsIntergerMilliseconds.count();
 
     }else{
         //if high_resolution_clock is not steady use steady_clock
@@ -46,7 +48,7 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
 
         std::chrono::duration<int, std::milli> durationAsIntergerMilliseconds = end_ms - start_ms;
 
-        int intVal = durationAsIntergerMilliseconds.count();
+        intVal = durationAsIntergerMilliseconds.count();
     }
     return NULL;
 }
