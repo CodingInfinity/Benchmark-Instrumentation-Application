@@ -151,7 +151,11 @@ int main(int argc, char** argv) {
                         measurementType = new WallClockMeasurementType();
                         break;
                 }
-                measurementType->measure(job, command);
+                std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> listOfMeasurements = measurementType->measure(job, command);
+                com::codinginfinity::benchmark::management::thrift::messages::ResultMessage *resultMessage = new com::codinginfinity::benchmark::management::thrift::messages::ResultMessage;
+                resultMessage->experimentId = job.experimentId;
+                resultMessage->jobId = job.jobId;
+                resultMessage->measurements = listOfMeasurements;
 
                 delete(measurementType);
                 measurementType = NULL;
