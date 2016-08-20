@@ -49,6 +49,14 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
 
         intVal = durationAsIntergerMilliseconds.count();
     }
-    return NULL;
+
+    com::codinginfinity::benchmark::management::thrift::messages::Measurement *measurement = new com::codinginfinity::benchmark::management::thrift::messages::Measurement();
+    measurement->timestamp = 0;
+    measurement->value = intVal;
+
+    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> *measurements = new std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement>();
+    measurements->push_back(*measurement);
+
+    return *measurements;
 }
 
