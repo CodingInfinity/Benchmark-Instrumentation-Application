@@ -22,9 +22,7 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        /*
-         * Program Execution !!
-         */
+        system(command);
 
         auto end = std::chrono::high_resolution_clock::now();
 
@@ -40,9 +38,7 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
 
         auto start = std::chrono::steady_clock::now();
 
-        /*
-         * Program Execution !!
-         */
+        system(command);
 
         auto end = std::chrono::steady_clock::now();
 

@@ -139,41 +139,23 @@ int main(int argc, char** argv) {
                     }
                 }
 
-
-
-                // Fork process and start user's process
-                pid_t child_process_id;
-                child_process_id = fork();
-
-                if (child_process_id == -1) {
-                    perror("fork");
-                    _exit(EXIT_FAILURE);
-                } else if (child_process_id == 0) {
-                    // If the child_process_id == 0, then we are in the child process
-                    // Load child process
-                } else {
-                    // If the child_process_id is greater than 0, we are then in the parent process
-                    // User's process ID is in child_process_id
-
-                    // Get type of Job
-                    // Switch on type of job
-                    MeasurementType *measurementType;
-                    switch (job.measurementType) {
-                        case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::CPU:
-                            measurementType = new CPUMeasurementType();
-                            break;
-                        case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::MEM:
-                            measurementType = new MemoryMeasurementType();
-                            break;
-                        case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::TIME:
-                            measurementType = new WallClockMeasurementType();
-                            break;
-                    }
-                    measurementType->measure(job, command);
-
-                    delete(measurementType);
-                    measurementType = NULL;
+                MeasurementType *measurementType;
+                switch (job.measurementType) {
+                    case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::CPU:
+                        measurementType = new CPUMeasurementType();
+                        break;
+                    case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::MEM:
+                        measurementType = new MemoryMeasurementType();
+                        break;
+                    case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::TIME:
+                        measurementType = new WallClockMeasurementType();
+                        break;
                 }
+                measurementType->measure(job, command);
+
+                delete(measurementType);
+                measurementType = NULL;
+
             }catch (const std::exception& error) {
                 std::cerr << error.what() << std::endl;
             }
