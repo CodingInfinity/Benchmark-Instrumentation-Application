@@ -12,7 +12,7 @@ class MeasurementType {
     public:
         virtual std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
                 com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
-                std::string location) = 0;
+                std::string command) = 0;
 };
 
 
