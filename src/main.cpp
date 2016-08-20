@@ -24,11 +24,6 @@
 const int BACKLOG_SIZE = 1;
 const unsigned short PORT = 5555;
 
-
-void measurement_CPU(pid_t);
-void measurement_MEMORY(pid_t);
-void measurement_TIME(pid_t);
-
 int main(int argc, char** argv) {
 
 	/**
