@@ -19,6 +19,8 @@
 #include <libltdl/lt_system.h>
 #include <MeasurementType.h>
 #include <WallClockMeasurementType.h>
+#include <CPUMeasurementType.h>
+#include <MemoryMeasurementType.h>
 #include "untar.h"
 
 const int BACKLOG_SIZE = 1;
@@ -93,7 +95,11 @@ int main(int argc, char** argv) {
                 Archive::extractArchive(location, job.algorithm);
                 // Decompress the dataset into the root of the extracted algorithm directory
                 Archive::extractDataset(location, job.dataset);
+
+
                 // Build the user's application
+
+
 
                 // Fork process and start user's process
                 pid_t child_process_id;
@@ -114,13 +120,13 @@ int main(int argc, char** argv) {
                     MeasurementType *measurementType;
                     switch (job.measurementType) {
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::CPU:
-                            measurementType = new WallClockMeasurementType();
+                            measurementType = new CPUMeasurementType();
                             break;
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::MEM:
-                            measurementType = new WallClockMeasurementType();
+                            measurementType = new MemoryMeasurementType();
                             break;
                         case com::codinginfinity::benchmark::management::thrift::messages::MeasurementType::TIME:
-                            measurement_TIME(child_process_id);
+                            measurementType = new WallClockMeasurementType();
                             break;
                     }
                     delete(measurementType);
