@@ -29,5 +29,6 @@ CPUMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::
         // Switch on type of job
 
     }
-    return NULL;
+    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measurement;
+    return measurement;
 }

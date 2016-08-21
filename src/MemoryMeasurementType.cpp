@@ -28,6 +28,8 @@ MemoryMeasurementType::measure(com::codinginfinity::benchmark::management::thrif
         // Get type of Job
         // Switch on type of job
 
-    }b
-    return NULL;
+    }
+    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measurement;
+    return measurement;
+    
 }
