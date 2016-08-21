@@ -14,12 +14,11 @@
 #include <qpid/messaging/Receiver.h>
 #include <qpid/messaging/Sender.h>
 #include <qpid/messaging/Session.h>
-#include <thrift/protocol/TBinaryProtocol.h>
+#include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/transport/TBufferTransports.h>
 
 
 #include "message_constants.h"
-#include <libltdl/lt_system.h>
 #include <MeasurementType.h>
 #include <WallClockMeasurementType.h>
 #include <CPUMeasurementType.h>
@@ -85,8 +84,8 @@ int main(int argc, char** argv) {
                  */
                 boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> tMemoryBuffer(
                         new apache::thrift::transport::TMemoryBuffer(buffer, uint32_t(message.getContentSize())));
-                boost::shared_ptr<apache::thrift::protocol::TBinaryProtocol> protocol(
-                        new apache::thrift::protocol::TBinaryProtocol(tMemoryBuffer));
+                boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(
+                        new apache::thrift::protocol::TJSONProtocol(tMemoryBuffer));
                 std::cout<<"Converting message into Thrift Object"<<std::endl;
                 com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage job;
                 job.read(protocol.get());
@@ -163,25 +162,16 @@ int main(int argc, char** argv) {
                 /**
                  * Serialize message using Apache Thrift binary protocol
                  */
-
-                uint32_t bufferSize = listOfMeasurements.capacity()*sizeof(com::codinginfinity::benchmark::management::thrift::messages::Measurement)
-                                      + sizeof(com::codinginfinity::benchmark::management::thrift::messages::Measurement)
-                                      + sizeof(com::codinginfinity::benchmark::management::thrift::messages::ResultMessage);
-                bufferSize *= 1.2;
-                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut (new apache::thrift::transport::TMemoryBuffer(bufferSize));
-                boost::shared_ptr<apache::thrift::protocol::TBinaryProtocol> protocolOut (new apache::thrift::protocol::TBinaryProtocol(bufferOut));
+                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut (new apache::thrift::transport::TMemoryBuffer());
+                boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocolOut (new apache::thrift::protocol::TJSONProtocol(bufferOut));
                 resultMessage->write(protocolOut.get());
-
 
                 /**
                  * Place the serialized object back on the Queue
                  */
-                qpid::messaging::Message* message1 = new qpid::messaging::Message(bufferOut.get()->getBufferAsString());
+                qpid::messaging::Message* message1 = new qpid::messaging::Message(bufferOut->getBufferAsString());
                 sender.send(*message1);
-
-
-
-
+                
                 /*
                  * Deallocate memory(Because C++ is fun)
                  */
