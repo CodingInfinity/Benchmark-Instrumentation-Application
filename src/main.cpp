@@ -64,6 +64,7 @@ int main(int argc, char** argv) {
 		connection.open();
 		qpid::messaging::Session session = connection.createSession();
 		qpid::messaging::Receiver receiver = session.createReceiver(address);
+        qpid::messaging::Sender sender = session.createSender(address);
 		while (true) {
             try {
                 std::cout<<"Pulling message off the queue..."<<std::endl;
@@ -160,6 +161,21 @@ int main(int argc, char** argv) {
                 /**
                  * Serialize message using Apache Thrift binary protocol
                  */
+
+                uint32_t bufferSize = listOfMeasurements.capacity()*sizeof(com::codinginfinity::benchmark::management::thrift::messages::Measurement)
+                                      + sizeof(com::codinginfinity::benchmark::management::thrift::messages::Measurement)
+                                      + sizeof(com::codinginfinity::benchmark::management::thrift::messages::ResultMessage);
+                bufferSize *= 1.2;
+                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut = new apache::thrift::transport::TMemoryBuffer(bufferSize);
+                boost::shared_ptr<apache::thrift::protocol::TBinaryProtocol> protocolOut = new apache::thrift::protocol::TBinaryProtocol(bufferOut);
+                resultMessage->write(protocolOut.get());
+
+
+                /**
+                 * Place the serialized object back on the Queue
+                 */
+                qpid::messaging::Message* message1 = new qpid::messaging::Message(bufferOut.get()->getBufferAsString());
+                sender.send(*message1);
 
 
 
