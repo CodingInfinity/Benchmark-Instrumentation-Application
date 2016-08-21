@@ -64,7 +64,8 @@ int main(int argc, char** argv) {
 		connection.open();
 		qpid::messaging::Session session = connection.createSession();
 		qpid::messaging::Receiver receiver = session.createReceiver(address);
-        qpid::messaging::Sender sender = session.createSender(address);
+        std::string results = "results";
+        qpid::messaging::Sender sender = session.createSender(results);
 		while (true) {
             try {
                 std::cout<<"Pulling message off the queue..."<<std::endl;
@@ -91,7 +92,7 @@ int main(int argc, char** argv) {
                 job.read(protocol.get());
 
                 //Define location on monitor node where code and dataset is to be sotred
-                std::string location = "/home/fabio/Desktop/tmp/";
+                std::string location = "/tmp/test301";
 
                 //Remove the directory if it alread exisits
                 Archive::removeDirectory(location);
@@ -131,11 +132,11 @@ int main(int argc, char** argv) {
                     system("make");
 
                     std::ifstream infile("makefile");
-                    std::string command;
                     while (getline(infile, command)){
                         if(command == "run:") {
                             getline(infile, command);
                             command.erase(0, 1);
+                            break;
                         }
                     }
                 }
@@ -152,6 +153,7 @@ int main(int argc, char** argv) {
                         measurementType = new WallClockMeasurementType();
                         break;
                 }
+                std::cout << "The run command send to measure is : " << command << std::endl;
                 std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> listOfMeasurements = measurementType->measure(job, command);
                 com::codinginfinity::benchmark::management::thrift::messages::ResultMessage *resultMessage = new com::codinginfinity::benchmark::management::thrift::messages::ResultMessage;
                 resultMessage->experimentId = job.experimentId;
@@ -166,8 +168,8 @@ int main(int argc, char** argv) {
                                       + sizeof(com::codinginfinity::benchmark::management::thrift::messages::Measurement)
                                       + sizeof(com::codinginfinity::benchmark::management::thrift::messages::ResultMessage);
                 bufferSize *= 1.2;
-                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut = new apache::thrift::transport::TMemoryBuffer(bufferSize);
-                boost::shared_ptr<apache::thrift::protocol::TBinaryProtocol> protocolOut = new apache::thrift::protocol::TBinaryProtocol(bufferOut);
+                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut (new apache::thrift::transport::TMemoryBuffer(bufferSize));
+                boost::shared_ptr<apache::thrift::protocol::TBinaryProtocol> protocolOut (new apache::thrift::protocol::TBinaryProtocol(bufferOut));
                 resultMessage->write(protocolOut.get());
 
 
@@ -183,8 +185,6 @@ int main(int argc, char** argv) {
                 /*
                  * Deallocate memory(Because C++ is fun)
                  */
-                delete(listOfMeasurements);
-                listOfMeasurements = NULL;
 
                 delete(resultMessage);
                 resultMessage = NULL;
