@@ -25,7 +25,7 @@ git clone git://git.apache.org/qpid-cpp.git
 cd qpid-cpp
 mkdir cmake_build
 cd cmake_build
-make ..
+cmake ..
 make all
 sudo make install
 
