@@ -44,7 +44,7 @@ sudo make install
 SIGAR_TEMP_DIRECTORY="$(mktemp -d)"
 cd ${SIGAR_TEMP_DIRECTORY}
 git clone https://github.com/hyperic/sigar.git
-cd siger
+cd sigar
 mkdir cmake_build
 cd cmake_build
 cmake ..
