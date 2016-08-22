@@ -46,15 +46,6 @@ else()
     set(SIGAR_FOUND "Found")
 endif()
 
-# libarchive
-message (STATUS "** Searching for libarchive")
-find_package(LibArchive)
-if (NOT LibArchive_FOUND )
-    set(LIBARCHIVE_FOUND "Not found")
-else()
-    set(LIBARCHIVE_FOUND "Found")
-endif()
-
 # Boost libraries
 # DEFINE BOOST_SYSTEM_NO_DEPRECATED as to prevent from using old and deprecated API calls
 message (STATUS "** Searching for Boost")
@@ -72,7 +63,6 @@ message (STATUS "    Apache Proton      :     ${PROTON_FOUND}")
 message (STATUS "    Apache Qpid        :     ${QPID_FOUND}")
 message (STATUS "    Apache Thrift      :     ${THRIFT_FOUND}")
 message (STATUS "    Hyperic SIGAR      :     ${SIGAR_FOUND}")
-message (STATUS "    libarchive         :     ${LIBARCHIVE_FOUND}")
 message (STATUS "    Boost")
 message (STATUS "      Root             :     ${BOOST_ROOT}")
 message (STATUS "      Include Path     :     ${Boost_INCLUDE_DIR}")
@@ -85,5 +75,5 @@ message(STATUS "")
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file (GLOB SOURCE_FILES "src/*.cpp" "include/*.h")
-add_executable (Instrumentation ${SOURCE_FILES} include/MeasurementType.h include/WallClockMeasurementType.h src/WallClockMeasurementType.cpp include/CPUMeasurementType.h include/MemoryMeasurementType.h src/MemoryMeasurementType.cpp src/CPUMeasurementType.cpp)
-target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} ${LibArchive_LIBRARIES} )
+add_executable (Instrumentation ${SOURCE_FILES})
+target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} )

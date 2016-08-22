@@ -13,7 +13,6 @@ and not using the underlying systems package manager
   * Apache Qpid CPP with AMQP version 1.0 (Requires Apache Qpid Proton)
   * Apache Thrift C++ binding
   * Hyperic SIGAR
-  * libarchive
 
 **For all dependencies listed below please refer to relevant documentation for building dependency in question such
 as required dependencies etc.**
@@ -38,6 +37,8 @@ as required dependencies etc.**
     $ make all
     $ make install
 
+### Dependancies for Apache Qpid CPP can be found at https://github.com/apache/qpid-cpp/blob/master/INSTALL.txt
+
 ### Apache Thrift
     $ git clone git://git.apache.org/thrift.git
     $ cd thrift
@@ -50,15 +51,6 @@ as required dependencies etc.**
 ### Hyperic SIGAR
     $ git clone https://github.com/hyperic/sigar.git
     $ cd siger
-    $ mkdir cmake-build
-    $ cd cmake-build
-    $ cmake ..
-    $ make
-    $ make install
-
-### libarchive
-    $ git clone https://github.com/libarchive/libarchive.git
-    $ cd libarchive
     $ mkdir cmake-build
     $ cd cmake-build
     $ cmake ..

@@ -11,8 +11,7 @@ compiler:
   - gcc
 
 before_install:
-  - sh build/travis/installCXXDependencies.sh
-  - sh build/travis/installDependencies.sh 1> /dev/null
+  - sh build/travis/installDependencies.sh
 
 script:
   - mkdir cmake_build && cd cmake_build && cmake ..

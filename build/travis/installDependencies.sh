@@ -50,14 +50,3 @@ cd cmake_build
 cmake ..
 make
 sudo make install
-
-# Setup libarchive
-LIBARCHIVE_TEMP_DIRECTORY="$(mktemp -d)"
-cd ${LIBARCHIVE_TEMP_DIRECTORY}
-git clone https://github.com/libarchive/libarchive.git
-cd libarchive
-mkdir cmake_build
-cd cmake_build
-cmake ..
-make
-sudo make install
