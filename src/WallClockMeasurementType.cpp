@@ -5,16 +5,12 @@
 #include <chrono>
 #include "WallClockMeasurementType.h"
 
-std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> 
-        WallClockMeasurementType::measure(
-                com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
-                std::string command) {
+void WallClockMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
+                                       std::string command,
+                                       std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>* measurements) {
     // Every specified interval, probe for measurement and add to results structure, while also monitoring if user
     // process is still active.
     // When user process exits, push result structure onto queue
-
-
-
     int intVal;
 
     if(std::chrono::high_resolution_clock::is_steady){
@@ -54,9 +50,6 @@ std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measur
     measurement->timestamp = 0;
     measurement->value = intVal;
 
-    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> *measurements = new std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement>();
-    measurements->push_back(*measurement);
-
-    return *measurements;
+    measurements->push_back(measurement);
 }
 

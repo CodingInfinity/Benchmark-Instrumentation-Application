@@ -56,15 +56,25 @@ int main(int argc, char** argv) {
 	 */
 	std::string broker = argc > 1 ? argv[1] : "localhost:5672";
 	std::string address = argc > 2 ? argv[2] : "jobs";
+    std::string results = "results";
 
 	qpid::messaging::Connection connection(broker);
 
 	try {
 		connection.open();
+
 		qpid::messaging::Session session = connection.createSession();
 		qpid::messaging::Receiver receiver = session.createReceiver(address);
-        std::string results = "results";
         qpid::messaging::Sender sender = session.createSender(results);
+
+        /**
+         * Apache Thrift objects used for serialization and deserialization. The
+         * protocol is backed by an in-memory buffer capable managing it's own
+         * memory allocations and deallocations.
+         */
+        boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> memoryBuffer(new apache::thrift::transport::TMemoryBuffer);
+        boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(new apache::thrift::protocol::TJSONProtocol(memoryBuffer));
+
 		while (true) {
             try {
                 std::cout<<"Pulling message off the queue..."<<std::endl;
@@ -72,21 +82,12 @@ int main(int argc, char** argv) {
                 std::cout<<"Message received"<<std::endl;
                 session.acknowledge();
 
-                std::string content = message.getContent();
-
-                uint8_t *buffer = new uint8_t[message.getContentSize()];
-                for (size_t i = 0; i < message.getContentSize(); i++) {
-                    buffer[i] = message.getContent().at(i);
-                }
-
                 /**
                  * Deserialize message using Apache Thrift binary protocol
                  */
-                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> tMemoryBuffer(
-                        new apache::thrift::transport::TMemoryBuffer(buffer, uint32_t(message.getContentSize())));
-                boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(
-                        new apache::thrift::protocol::TJSONProtocol(tMemoryBuffer));
                 std::cout<<"Converting message into Thrift Object"<<std::endl;
+                memoryBuffer->resetBuffer((uint32_t)message.getContentSize());
+                memoryBuffer->write((uint8_t*)message.getContent().c_str(), (uint32_t)message.getContentSize());
                 com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage job;
                 job.read(protocol.get());
 
@@ -153,32 +154,54 @@ int main(int argc, char** argv) {
                         break;
                 }
                 std::cout << "The run command send to measure is : " << command << std::endl;
-                std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> listOfMeasurements = measurementType->measure(job, command);
-                com::codinginfinity::benchmark::management::thrift::messages::ResultMessage *resultMessage = new com::codinginfinity::benchmark::management::thrift::messages::ResultMessage;
-                resultMessage->experimentId = job.experimentId;
-                resultMessage->jobId = job.jobId;
-                resultMessage->measurements = listOfMeasurements;
+                /**
+                 * The measure() function of MeasurementType class can create new Measurmenet objects, and hence will
+                 * pass pointers back to these objects to prevent the use of copy-constructing of objects on vector.
+                 */
+                std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*> listOfMeasurements;
+                measurementType->measure(job, command, &listOfMeasurements);
+
+                /**
+                 * The Thrift object however requires a vector of Measurement objects, hence we need to create a new
+                 * vector to dereference all the objects created by the measure function in the MeasurementType class.
+                 */
+                std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> resultMeasurements;
+                for (std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>::iterator it = listOfMeasurements.begin() ; it != listOfMeasurements.end(); ++it) {
+                    resultMeasurements.push_back(**it);
+                }
+
+                com::codinginfinity::benchmark::management::thrift::messages::ResultMessage resultMessage;
+                resultMessage.experimentId = job.experimentId;
+                resultMessage.jobId = job.jobId;
+                resultMessage.measurements = resultMeasurements;
 
                 /**
                  * Serialize message using Apache Thrift binary protocol
                  */
-                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> bufferOut (new apache::thrift::transport::TMemoryBuffer());
-                boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocolOut (new apache::thrift::protocol::TJSONProtocol(bufferOut));
-                resultMessage->write(protocolOut.get());
+                memoryBuffer->resetBuffer();
+                resultMessage.write(protocol.get());
+
+                /**
+                 * Remove objects from resultMeasurements which is simply dereferenced pointers.
+                 */
+                resultMeasurements.clear();
+                /**
+                 * Cleanup all the objects created by the MeasurementType.
+                 */
+                while (!listOfMeasurements.empty()) {
+                    delete (listOfMeasurements.front());
+                    listOfMeasurements.erase(listOfMeasurements.begin());
+                }
 
                 /**
                  * Place the serialized object back on the Queue
                  */
-                qpid::messaging::Message* message1 = new qpid::messaging::Message(bufferOut->getBufferAsString());
-                sender.send(*message1);
+                qpid::messaging::Message result(memoryBuffer->getBufferAsString());
+                sender.send(result);
                 
                 /*
                  * Deallocate memory(Because C++ is fun)
                  */
-
-                delete(resultMessage);
-                resultMessage = NULL;
-
                 delete(measurementType);
                 measurementType = NULL;
 

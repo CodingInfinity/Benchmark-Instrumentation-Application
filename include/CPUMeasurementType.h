@@ -8,9 +8,10 @@
 #include "MeasurementType.h"
 
 class CPUMeasurementType : public MeasurementType{
-    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
+    void measure (
             com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
-            std::string command);
+            std::string,
+            std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>*);
 };
 
 #endif //BENCHMARK_INSTRUMENTATION_APPLICATION_CPUMEASUREMENTTYPE_H

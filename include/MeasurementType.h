@@ -10,9 +10,10 @@
 
 class MeasurementType {
     public:
-        virtual std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
+        virtual void measure (
                 com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
-                std::string command) = 0;
+                std::string,
+                std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>*) = 0;
 };
 
 

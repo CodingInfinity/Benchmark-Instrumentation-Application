@@ -9,9 +9,10 @@
 #include "MeasurementType.h"
 
 class WallClockMeasurementType : public MeasurementType{
-    std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement> measure(
+    void measure (
             com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage,
-            std::string command);
+            std::string,
+            std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>*);
 };
 
 
