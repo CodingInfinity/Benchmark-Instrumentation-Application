@@ -102,7 +102,6 @@ artifacts/
 
 *_i.c
 *_p.c
-*_i.h
 *.ilk
 *.meta
 *.obj
@@ -814,7 +813,6 @@ local.properties
 *.moc
 moc_*.cpp
 qrc_*.cpp
-ui_*.h
 Makefile*
 *-build-*
 
@@ -877,7 +875,6 @@ artifacts/
 
 *_i.c
 *_p.c
-*_i.h
 *.ilk
 *.meta
 *.obj

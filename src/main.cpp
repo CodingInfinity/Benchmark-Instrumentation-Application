@@ -58,7 +58,7 @@ int main(int argc, char** argv) {
 	std::string address = argc > 2 ? argv[2] : "jobs";
     std::string results = "results";
 
-	qpid::messaging::Connection connection(broker);
+	qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
 
 	try {
 		connection.open();
@@ -198,6 +198,7 @@ int main(int argc, char** argv) {
                  */
                 qpid::messaging::Message result(memoryBuffer->getBufferAsString());
                 sender.send(result);
+
                 
                 /*
                  * Deallocate memory(Because C++ is fun)
