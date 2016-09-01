@@ -50,3 +50,14 @@ cd cmake_build
 cmake ..
 make
 sudo make install
+
+# Setup Hyperic SIGAR
+YAML_TEMP_DIRECTORY="$(mktemp -d)"
+cd ${YAML_TEMP_DIRECTORY}
+git clone https://github.com/jbeder/yaml-cpp
+cd yaml-cpp
+mkdir cmake_build
+cd cmake_build
+cmake ..
+make
+sudo make install
