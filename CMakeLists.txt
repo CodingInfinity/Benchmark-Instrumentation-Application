@@ -46,6 +46,15 @@ else()
     set(SIGAR_FOUND "Found")
 endif()
 
+# YAML-CPP
+message (STATUS "** Searching for YAML CPP")
+find_package(yaml-cpp REQUIRED)
+if (NOT YAML_CPP_LIBRARIES)
+    set(YAML_FOUND "Not found")
+else()
+    set(YAML_FOUND "Found")
+endif()
+
 # Boost libraries
 # DEFINE BOOST_SYSTEM_NO_DEPRECATED as to prevent from using old and deprecated API calls
 message (STATUS "** Searching for Boost")
@@ -63,6 +72,7 @@ message (STATUS "    Apache Proton      :     ${PROTON_FOUND}")
 message (STATUS "    Apache Qpid        :     ${QPID_FOUND}")
 message (STATUS "    Apache Thrift      :     ${THRIFT_FOUND}")
 message (STATUS "    Hyperic SIGAR      :     ${SIGAR_FOUND}")
+message (STATUS "    YAML CPP           :     ${YAML_FOUND}")
 message (STATUS "    Boost")
 message (STATUS "      Root             :     ${BOOST_ROOT}")
 message (STATUS "      Include Path     :     ${Boost_INCLUDE_DIR}")
@@ -76,4 +86,4 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file (GLOB SOURCE_FILES "src/*.cpp" "include/*.h")
 add_executable (Instrumentation ${SOURCE_FILES})
-target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} )
+target_link_libraries (Instrumentation ${THRIFT_LIBRARIES} ${Qpid_LIBRARIES} ${Proton_LIBRARIES} ${Boost_LIBRARIES} ${SIGAR_LIBRARIES} ${YAML_CPP_LIBRARIES} )

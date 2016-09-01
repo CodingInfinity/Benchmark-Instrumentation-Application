@@ -56,3 +56,12 @@ as required dependencies etc.**
     $ cmake ..
     $ make
     $ make install
+
+### YAML CPP
+    $ git clone https://github.com/jbeder/yaml-cpp
+    $ cd yaml-cpp
+    $ mkdir cmake-build
+    $ cd cmake-build
+    $ cmake ..
+    $ make
+    $ make install

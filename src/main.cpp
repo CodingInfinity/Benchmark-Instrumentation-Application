@@ -16,7 +16,9 @@
 #include <qpid/messaging/Session.h>
 #include <thrift/protocol/TJSONProtocol.h>
 #include <thrift/transport/TBufferTransports.h>
-
+#include <yaml-cpp/yaml.h>
+#include <yaml-cpp/node/node.h>
+#include <yaml-cpp/node/parse.h>
 
 #include "message_constants.h"
 #include <MeasurementType.h>
@@ -66,6 +68,37 @@ int main(int argc, char** argv) {
 		qpid::messaging::Session session = connection.createSession();
 		qpid::messaging::Receiver receiver = session.createReceiver(address);
         qpid::messaging::Sender sender = session.createSender(results);
+        qpid::messaging::Sender heartbeat = session.createSender("heartbeat");
+
+        // ToDo Find a way to send the heartbeat messages on regular intervals in cpp
+        // ToDo After impl of sending of heartbeats, refactor code to cleanup
+        com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbeatMessage;
+
+        YAML::Node config = YAML::LoadFile("config.yaml");
+        YAML::Node general = config["general"];
+        heartbeatMessage.__set_id(general["id"].as<std::string>());
+        heartbeatMessage.__set_description(general["description"].as<std::string>());
+
+        YAML::Node technical = config["technical"];
+        heartbeatMessage.__set_cpu(technical["cpu"].as<std::string>());
+        heartbeatMessage.__set_memory(technical["memory"].as<std::string>());
+
+        YAML::Node distro = technical["distro"];
+        heartbeatMessage.__set_os(distro["os"].as<std::string>());
+        heartbeatMessage.__set_kernel(distro["kernel"].as<std::string>());
+
+
+        YAML::Node administrative = config["administrative"];
+        heartbeatMessage.__set_name(administrative["name"].as<std::string>());
+        heartbeatMessage.__set_email(administrative["email"].as<std::string>());
+        heartbeatMessage.__set_phone(administrative["phone"].as<std::string>());
+
+        unsigned long milliseconds_since_epoch =
+                std::chrono::duration_cast<std::chrono::seconds>
+                        (std::chrono::system_clock::now().time_since_epoch()).count();
+        heartbeatMessage.__set_current(milliseconds_since_epoch);
+        heartbeatMessage.__set_heartbeat(0);
+        heartbeatMessage.__set_busy(false);
 
         /**
          * Apache Thrift objects used for serialization and deserialization. The
@@ -74,6 +107,11 @@ int main(int argc, char** argv) {
          */
         boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> memoryBuffer(new apache::thrift::transport::TMemoryBuffer);
         boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(new apache::thrift::protocol::TJSONProtocol(memoryBuffer));
+
+        memoryBuffer->resetBuffer();
+        heartbeatMessage.write(protocol.get());
+        qpid::messaging::Message heartbeatAMQPMessage(memoryBuffer->getBufferAsString());
+        heartbeat.send(heartbeatAMQPMessage);
 
 		while (true) {
             try {

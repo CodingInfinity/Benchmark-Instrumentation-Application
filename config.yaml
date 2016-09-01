@@ -1,0 +1,14 @@
+general:
+  id: "67uax7262=03"
+  description: This is test machine for profiling code
+technical:
+  cpu: Intel i7 3.0 GHz
+  memory: 8Gb
+  distro:
+    os: Ubuntu 14.04 LTS
+    kernel: Linux 4.2.2 LTS
+administrative:
+  name: John Doe
+  email: JohnDoe@example.co.za
+  phone: +27 (0)12 345 6789
+
