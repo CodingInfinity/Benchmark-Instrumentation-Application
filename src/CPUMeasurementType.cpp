@@ -2,6 +2,8 @@
 // Created by reinhardt on 2016/08/17.
 //
 
+#include <sigar.h>
+#include <chrono>
 #include "CPUMeasurementType.h"
 
 void CPUMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
@@ -21,12 +23,30 @@ void CPUMeasurementType::measure(com::codinginfinity::benchmark::management::thr
     } else if (child_process_id == 0) {
         // If the child_process_id == 0, then we are in the child process
         // Load child process
+        system(command.c_str());
     } else {
         // If the child_process_id is greater than 0, we are then in the parent process
         // User's process ID is in child_process_id
+        unsigned long milliseconds_since_epoch =
+                std::chrono::duration_cast<std::chrono::seconds>
+                        (std::chrono::system_clock::now().time_since_epoch()).count();
 
-        // Get type of Job
-        // Switch on type of job
+        int probeInterval = jobSpecification.probeInterval;
+        int timeout = jobSpecification.timeout;
 
+        sigar_t *sigar;
+        sigar_open(&sigar);
+
+        for (int i = 0; i < timeout; i += probeInterval) {
+            com::codinginfinity::benchmark::management::thrift::messages::Measurement *measurement = new com::codinginfinity::benchmark::management::thrift::messages::Measurement();
+            sigar_proc_cpu_t cpu;
+            sigar_proc_cpu_get(sigar, child_process_id, &cpu);
+            measurement->value = cpu.percent;
+            measurement->timestamp = std::chrono::duration_cast<std::chrono::seconds>
+                    (std::chrono::system_clock::now().time_since_epoch()).count();
+            measurements->push_back(measurement);
+            sleep(probeInterval);
+        }
+        sigar_close(sigar);
     }
 }
