@@ -47,7 +47,10 @@ void WallClockMeasurementType::measure(com::codinginfinity::benchmark::managemen
     }
 
     com::codinginfinity::benchmark::management::thrift::messages::Measurement *measurement = new com::codinginfinity::benchmark::management::thrift::messages::Measurement();
-    measurement->timestamp = 0;
+    unsigned long milliseconds_since_epoch =
+            std::chrono::duration_cast<std::chrono::seconds>
+                    (std::chrono::system_clock::now().time_since_epoch()).count();
+    measurement->timestamp = milliseconds_since_epoch;
     measurement->value = intVal;
 
     measurements->push_back(measurement);
