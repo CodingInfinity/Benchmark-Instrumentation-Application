@@ -25,16 +25,23 @@
 #include <WallClockMeasurementType.h>
 #include <CPUMeasurementType.h>
 #include <MemoryMeasurementType.h>
+#include <stdlib.h>
+#include <SignalHandler.h>
 #include "untar.h"
 
 const int BACKLOG_SIZE = 1;
 const unsigned short PORT = 5555;
 
+
 int main(int argc, char** argv) {
 
-	/**
-	 * First ensure we can bind to a socket to allow the client to use pass Benchmark API calls us
-	 */
+    signal(SIGINT, signal_exit);
+    signal(SIGALRM, signal_alarm);
+    alarm(1);
+
+    /**
+     * First ensure we can bind to a socket to allow the client to use pass Benchmark API calls us
+     */
 	boost::asio::ip::address address1 = boost::asio::ip::address_v4::loopback();
 	boost::asio::ip::tcp::endpoint endpoint(address1, PORT);
 
@@ -60,45 +67,16 @@ int main(int argc, char** argv) {
 	std::string address = argc > 2 ? argv[2] : "jobs";
     std::string results = "results";
 
-	qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
+    SignalHandler::broker = broker;
 
-	try {
+	qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
+    try {
 		connection.open();
 
 		qpid::messaging::Session session = connection.createSession();
 		qpid::messaging::Receiver receiver = session.createReceiver(address);
         qpid::messaging::Sender sender = session.createSender(results);
-        qpid::messaging::Sender heartbeat = session.createSender("heartbeat");
 
-        // ToDo Find a way to send the heartbeat messages on regular intervals in cpp
-        // ToDo After impl of sending of heartbeats, refactor code to cleanup
-        com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbeatMessage;
-
-        YAML::Node config = YAML::LoadFile("config.yaml");
-        YAML::Node general = config["general"];
-        heartbeatMessage.__set_id(general["id"].as<std::string>());
-        heartbeatMessage.__set_description(general["description"].as<std::string>());
-
-        YAML::Node technical = config["technical"];
-        heartbeatMessage.__set_cpu(technical["cpu"].as<std::string>());
-        heartbeatMessage.__set_memory(technical["memory"].as<std::string>());
-
-        YAML::Node distro = technical["distro"];
-        heartbeatMessage.__set_os(distro["os"].as<std::string>());
-        heartbeatMessage.__set_kernel(distro["kernel"].as<std::string>());
-
-
-        YAML::Node administrative = config["administrative"];
-        heartbeatMessage.__set_name(administrative["name"].as<std::string>());
-        heartbeatMessage.__set_email(administrative["email"].as<std::string>());
-        heartbeatMessage.__set_phone(administrative["phone"].as<std::string>());
-
-        unsigned long milliseconds_since_epoch =
-                std::chrono::duration_cast<std::chrono::seconds>
-                        (std::chrono::system_clock::now().time_since_epoch()).count();
-        heartbeatMessage.__set_current(milliseconds_since_epoch);
-        heartbeatMessage.__set_heartbeat(0);
-        heartbeatMessage.__set_busy(false);
 
         /**
          * Apache Thrift objects used for serialization and deserialization. The
@@ -108,17 +86,13 @@ int main(int argc, char** argv) {
         boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> memoryBuffer(new apache::thrift::transport::TMemoryBuffer);
         boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(new apache::thrift::protocol::TJSONProtocol(memoryBuffer));
 
-        memoryBuffer->resetBuffer();
-        heartbeatMessage.write(protocol.get());
-        qpid::messaging::Message heartbeatAMQPMessage(memoryBuffer->getBufferAsString());
-        heartbeat.send(heartbeatAMQPMessage);
-
 		while (true) {
             try {
                 std::cout<<"Pulling message off the queue..."<<std::endl;
-                qpid::messaging::Message message = receiver.fetch(qpid::messaging::Duration::SECOND * 1); // 1s timeout
+                qpid::messaging::Message message = receiver.fetch(qpid::messaging::Duration::SECOND * 2); // 1s timeout
                 std::cout<<"Message received"<<std::endl;
                 session.acknowledge();
+
 
                 /**
                  * Deserialize message using Apache Thrift binary protocol
