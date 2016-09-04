@@ -112,5 +112,16 @@ void MemoryMeasurementType::measure(com::codinginfinity::benchmark::management::
             measurements->push_back(measurement);
         }
     }
+    //delete each part of the args char **
+    for(i = 0; i < commands.size(); ++i){
+        delete(args[i]);
+    }
+    delete(args);
+
+    //delete each char * in the commands vector
+    while (!commands.empty()) {
+        delete (commands.front());
+        commands.erase(commands.begin());
+    }
 }
 
