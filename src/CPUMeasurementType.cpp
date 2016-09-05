@@ -10,6 +10,8 @@
 #include <sys/types.h>
 #include <signal.h>
 #include <wait.h>
+#include <iostream>
+#include <cmath>
 
 
 void CPUMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,

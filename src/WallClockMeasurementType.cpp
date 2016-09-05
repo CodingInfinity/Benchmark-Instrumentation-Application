@@ -6,6 +6,7 @@
 #include "WallClockMeasurementType.h"
 #include <string.h>
 #include <cstring>
+#include <iostream>
 #include <wait.h>
 
 void WallClockMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
