@@ -49,7 +49,7 @@ void signal_alarm(int signum){
                 std::chrono::duration_cast<std::chrono::seconds>
                         (std::chrono::system_clock::now().time_since_epoch()).count();
         heartbeatMessage.__set_current(milliseconds_since_epoch);
-        heartbeatMessage.__set_heartbeat(0);
+        heartbeatMessage.__set_heartbeat(30);
         heartbeatMessage.__set_busy(false);
 
         boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> memoryBuffer(
