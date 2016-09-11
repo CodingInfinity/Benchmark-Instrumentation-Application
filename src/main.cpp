@@ -237,7 +237,7 @@ int main(int argc, char** argv) {
                 measurementType->measure(job, command, &listOfMeasurements);
 
                 std::cout<<"Reset alarm after doing measurement"<<std::endl;
-                alarm(0);
+                alarm(1);
 
                 /**
                  * The Thrift object however requires a vector of Measurement objects, hence we need to create a new
