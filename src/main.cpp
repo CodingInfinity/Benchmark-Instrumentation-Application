@@ -31,6 +31,7 @@
 
 const int BACKLOG_SIZE = 1;
 const unsigned short PORT = 5555;
+const char datasetSpec [] = "dataset.spec";
 
 /**
  * Create connection to message broker to start retrieving jobs
