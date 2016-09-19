@@ -13,7 +13,6 @@
 #include <iostream>
 #include <cmath>
 
-extern char datasetSpec[];
 
 void CPUMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
                                  std::string command,

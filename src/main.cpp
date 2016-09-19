@@ -31,7 +31,7 @@
 
 const int BACKLOG_SIZE = 1;
 const unsigned short PORT = 5555;
-const char datasetSpec [] = "dataset.spec";
+char datasetSpec[] = "dataset.spec";
 
 /**
  * Create connection to message broker to start retrieving jobs
@@ -55,7 +55,7 @@ com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbea
 /**
  * Extract all information form the YAML file
  */
-YAML::Node config = YAML::LoadFile("../config.yaml");
+YAML::Node config = YAML::LoadFile("/home/fabio/Documents/COS/COS301/MainProject/Benchmark-Instrumentation-Application/config.yaml");
 YAML::Node general = config["general"];
 YAML::Node technical = config["technical"];
 YAML::Node distro = technical["distro"];

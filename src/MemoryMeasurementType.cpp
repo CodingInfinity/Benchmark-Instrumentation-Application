@@ -9,7 +9,6 @@
 #include <cstring>
 #include <wait.h>
 
-extern char datasetSpec[];
 
 void MemoryMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
                                     std::string command,

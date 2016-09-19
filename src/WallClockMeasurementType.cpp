@@ -9,7 +9,6 @@
 #include <iostream>
 #include <wait.h>
 
-extern char datasetSpec[];
 
 void WallClockMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
                                        std::string command,
