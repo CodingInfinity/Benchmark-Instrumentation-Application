@@ -7,6 +7,7 @@
 
 
 #include "message_types.h"
+#include "extern_constants.h"
 
 class MeasurementType {
     public:

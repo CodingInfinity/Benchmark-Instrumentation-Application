@@ -9,6 +9,7 @@
 #include <iostream>
 #include <wait.h>
 
+
 void WallClockMeasurementType::measure(com::codinginfinity::benchmark::management::thrift::messages::JobSpecificationMessage jobSpecification,
                                        std::string command,
                                        std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*>* measurements) {
@@ -16,7 +17,7 @@ void WallClockMeasurementType::measure(com::codinginfinity::benchmark::managemen
     // process is still active.
     // When user process exits, push result structure onto queue
 
-    char  * input = new char[100];
+    char  * input = new char[command.length()];
     strcpy(input, command.c_str());
     std::vector<char *> commands;
     char *token = std::strtok(input, " ");
@@ -24,15 +25,17 @@ void WallClockMeasurementType::measure(com::codinginfinity::benchmark::managemen
         commands.push_back(token);
         token = std::strtok(NULL, " ");
     }
-    char ** args = new char *[commands.size()+1];
+    char ** args = new char *[commands.size()+ 1 + 2];
     int i;
     for(i = 0; i < commands.size(); ++i){
-        args[i] = new char[15];
-    }
-    for(i = 0; i < commands.size(); ++i){
+        args[i] = new char[strlen(commands[i])];
         strcpy(args[i],commands[i]);
     }
-    args[i] = (char *)0;
+    args[i] = new char[1];
+    args[i][0] = '<';
+    args[i+1] = new char[strlen(datasetSpec)];
+    strcpy(args[i+1], datasetSpec);
+    args[i+2] = (char *)0;
 
     auto start_HighResolution = std::chrono::high_resolution_clock::now();
     auto start_Steady = std::chrono::steady_clock::now();

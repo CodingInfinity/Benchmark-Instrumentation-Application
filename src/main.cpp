@@ -31,13 +31,58 @@
 
 const int BACKLOG_SIZE = 1;
 const unsigned short PORT = 5555;
+char datasetSpec[] = "dataset.spec";
 
+/**
+ * Create connection to message broker to start retrieving jobs
+ */
+//std::string broker = argc > 1 ? argv[1] : "localhost:5672";
+//std::string address = argc > 2 ? argv[2] : "jobs";
+std::string broker = "localhost:5672";
+std::string address = "jobs";
+std::string results = "results";
+
+qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
+qpid::messaging::Session session;
+qpid::messaging::Receiver receiver;
+qpid::messaging::Sender sender;
+qpid::messaging::Sender heartbeat;
+
+/**
+ * Create Heartbeat messege to be sent
+ */
+com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbeatMessage;
+/**
+ * Extract all information form the YAML file
+ */
+YAML::Node config = YAML::LoadFile("/home/fabio/Documents/COS/COS301/MainProject/Benchmark-Instrumentation-Application/config.yaml");
+YAML::Node general = config["general"];
+YAML::Node technical = config["technical"];
+YAML::Node distro = technical["distro"];
+YAML::Node administrative = config["administrative"];
 
 int main(int argc, char** argv) {
+    /**
+     * Assign the broker
+     * This assignment does not compile in global namespace for some reason
+     */
+    SignalHandler::broker = broker;
 
-    signal(SIGINT, signal_exit);
-    signal(SIGALRM, signal_alarm);
-    alarm(1);
+    /**
+     * Assign all values execpt time to the heartbeat messege
+     */
+    heartbeatMessage.__set_id(general["id"].as<std::string>());
+    heartbeatMessage.__set_description(general["description"].as<std::string>());
+
+    heartbeatMessage.__set_cpu(technical["cpu"].as<std::string>());
+    heartbeatMessage.__set_memory(technical["memory"].as<std::string>());
+
+    heartbeatMessage.__set_os(distro["os"].as<std::string>());
+    heartbeatMessage.__set_kernel(distro["kernel"].as<std::string>());
+
+    heartbeatMessage.__set_name(administrative["name"].as<std::string>());
+    heartbeatMessage.__set_email(administrative["email"].as<std::string>());
+    heartbeatMessage.__set_phone(administrative["phone"].as<std::string>());
 
     /**
      * First ensure we can bind to a socket to allow the client to use pass Benchmark API calls us
@@ -60,22 +105,20 @@ int main(int argc, char** argv) {
 
 	acceptor.listen(BACKLOG_SIZE);
 
-	/**
-	 * Open connection to message broker to start retrieving jobs
-	 */
-	std::string broker = argc > 1 ? argv[1] : "localhost:5672";
-	std::string address = argc > 2 ? argv[2] : "jobs";
-    std::string results = "results";
-
-    SignalHandler::broker = broker;
-
-	qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
     try {
-		connection.open();
+        /**
+         * Open connection to message broker to start retrieving jobs
+         */
+        connection.open();
 
-		qpid::messaging::Session session = connection.createSession();
-		qpid::messaging::Receiver receiver = session.createReceiver(address);
-        qpid::messaging::Sender sender = session.createSender(results);
+		session = connection.createSession();
+		receiver = session.createReceiver(address);
+        sender = session.createSender(results);
+        heartbeat = session.createSender("heartbeat");
+
+        signal(SIGINT, signal_exit);
+        signal(SIGALRM, signal_alarm);
+        alarm(1);
 
 
         /**
@@ -171,7 +214,31 @@ int main(int argc, char** argv) {
                  * pass pointers back to these objects to prevent the use of copy-constructing of objects on vector.
                  */
                 std::vector<com::codinginfinity::benchmark::management::thrift::messages::Measurement*> listOfMeasurements;
+                //cancel the alarm
+                alarm(0);
+                unsigned long milliseconds_since_epoch =
+                        std::chrono::duration_cast<std::chrono::seconds>
+                                (std::chrono::system_clock::now().time_since_epoch()).count();
+                heartbeatMessage.__set_current(milliseconds_since_epoch);
+                heartbeatMessage.__set_heartbeat(job.timeout);
+                heartbeatMessage.__set_busy(true);
+
+                boost::shared_ptr<apache::thrift::transport::TMemoryBuffer> memoryBuffer(
+                        new apache::thrift::transport::TMemoryBuffer);
+                boost::shared_ptr<apache::thrift::protocol::TJSONProtocol> protocol(
+                        new apache::thrift::protocol::TJSONProtocol(memoryBuffer));
+
+                memoryBuffer->resetBuffer();
+                heartbeatMessage.write(protocol.get());
+                qpid::messaging::Message heartbeatAMQPMessage(memoryBuffer->getBufferAsString());
+                heartbeat.send(heartbeatAMQPMessage);
+                std::cout<<"Final Heartbeat before doing measurement set"<<std::endl;
+
+                //Do the measurement
                 measurementType->measure(job, command, &listOfMeasurements);
+
+                std::cout<<"Reset alarm after doing measurement"<<std::endl;
+                alarm(1);
 
                 /**
                  * The Thrift object however requires a vector of Measurement objects, hence we need to create a new
@@ -230,3 +297,5 @@ int main(int argc, char** argv) {
 		return 1;
 	}
 }
+
+

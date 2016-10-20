@@ -7,6 +7,8 @@
 
 #include <cstdio>
 #include <stdlib.h>
+#include <chrono>
+#include <MeasurementType.h>
 #include <boost/asio.hpp>
 #include <qpid/messaging/Connection.h>
 #include <qpid/messaging/FailoverUpdates.h>
@@ -19,6 +21,8 @@
 #include <yaml-cpp/yaml.h>
 #include <yaml-cpp/node/node.h>
 #include <yaml-cpp/node/parse.h>
+
+#include <iostream>
 
 namespace SignalHandler{
     static std::string broker = "localhost:5672";
