@@ -39,8 +39,9 @@ std::string address;
 std::string results;
 std::string heartbeatQueue;
 
-qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
+
 qpid::messaging::Session session;
+qpid::messaging::Connection connection;
 qpid::messaging::Receiver receiver;
 qpid::messaging::Sender sender;
 qpid::messaging::Sender heartbeat;
@@ -52,7 +53,7 @@ com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbea
 /**
  * Extract all information form the YAML file
  */
-YAML::Node config = YAML::LoadFile("/home/fabio/Documents/COS/COS301/MainProject/Benchmark-Instrumentation-Application/config.yaml");
+YAML::Node config = YAML::LoadFile("../config.yaml");
 YAML::Node general = config["general"];
 YAML::Node technical = config["technical"];
 YAML::Node distro = technical["distro"];
@@ -63,6 +64,7 @@ YAML::Node queues = server["queues"];
 int main(int argc, char** argv) {
 
     broker = server["host"].as<std::string>() + ":" + server["port"].as<std::string>();
+    connection = *(new qpid::messaging::Connection(broker, "{protocol: amqp1.0}"));
     address = queues["jobs"].as<std::string>();
     results = queues["results"].as<std::string>();
     heartbeatQueue = queues["heartbeat"].as<std::string>();
