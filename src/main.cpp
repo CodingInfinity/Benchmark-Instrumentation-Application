@@ -29,18 +29,15 @@
 #include <SignalHandler.h>
 #include "untar.h"
 
-const int BACKLOG_SIZE = 1;
-const unsigned short PORT = 5555;
 char datasetSpec[] = "dataset.spec";
 
 /**
  * Create connection to message broker to start retrieving jobs
  */
-//std::string broker = argc > 1 ? argv[1] : "localhost:5672";
-//std::string address = argc > 2 ? argv[2] : "jobs";
-std::string broker = "localhost:5672";
-std::string address = "jobs";
-std::string results = "results";
+std::string broker;
+std::string address;
+std::string results;
+std::string heartbeatQueue;
 
 qpid::messaging::Connection connection(broker, "{protocol: amqp1.0}");
 qpid::messaging::Session session;
@@ -60,8 +57,16 @@ YAML::Node general = config["general"];
 YAML::Node technical = config["technical"];
 YAML::Node distro = technical["distro"];
 YAML::Node administrative = config["administrative"];
+YAML::Node server = config["server"];
+YAML::Node queues = server["queues"];
 
 int main(int argc, char** argv) {
+
+    broker = server["host"].as<std::string>() + ":" + server["port"].as<std::string>();
+    address = queues["jobs"].as<std::string>();
+    results = queues["results"].as<std::string>();
+    heartbeatQueue = queues["heartbeat"].as<std::string>();
+
     /**
      * Assign the broker
      * This assignment does not compile in global namespace for some reason
@@ -84,27 +89,6 @@ int main(int argc, char** argv) {
     heartbeatMessage.__set_email(administrative["email"].as<std::string>());
     heartbeatMessage.__set_phone(administrative["phone"].as<std::string>());
 
-    /**
-     * First ensure we can bind to a socket to allow the client to use pass Benchmark API calls us
-     */
-	boost::asio::ip::address address1 = boost::asio::ip::address_v4::loopback();
-	boost::asio::ip::tcp::endpoint endpoint(address1, PORT);
-
-	boost::asio::io_service ios;
-	boost::asio::ip::tcp::acceptor acceptor(ios, endpoint.protocol());
-	boost::system::error_code ec;
-	acceptor.bind(endpoint,  ec);
-
-	if (ec.value() != 0) {
-		std::cout
-		<< "Failed to open acceptor socket! "
-		<< "Error code = "
-		<< ec.value() << ". Message: " << ec.message();
-		return ec.value();
-	}
-
-	acceptor.listen(BACKLOG_SIZE);
-
     try {
         /**
          * Open connection to message broker to start retrieving jobs
@@ -114,7 +98,7 @@ int main(int argc, char** argv) {
 		session = connection.createSession();
 		receiver = session.createReceiver(address);
         sender = session.createSender(results);
-        heartbeat = session.createSender("heartbeat");
+        heartbeat = session.createSender(heartbeatQueue);
 
         signal(SIGINT, signal_exit);
         signal(SIGALRM, signal_alarm);

@@ -24,12 +24,6 @@
 
 #include <iostream>
 
-namespace SignalHandler{
-    static std::string broker = "localhost:5672";
-}
-
-
-
 void signal_exit(int signum);
 void signal_alarm(int signum);
 
