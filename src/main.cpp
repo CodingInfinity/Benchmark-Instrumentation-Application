@@ -68,12 +68,6 @@ int main(int argc, char** argv) {
     heartbeatQueue = queues["heartbeat"].as<std::string>();
 
     /**
-     * Assign the broker
-     * This assignment does not compile in global namespace for some reason
-     */
-    SignalHandler::broker = broker;
-
-    /**
      * Assign all values execpt time to the heartbeat messege
      */
     heartbeatMessage.__set_id(general["id"].as<std::string>());
