@@ -11,4 +11,10 @@ administrative:
   name: John Doe
   email: JohnDoe@example.co.za
   phone: +27 (0)12 345 6789
-
+server:
+  host: "localhost"
+  port: 5672
+  queues:
+    jobs: "jobs"
+    heartbeat: "heartbeat"
+    results: "results"
