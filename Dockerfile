@@ -55,4 +55,4 @@ RUN cd /tmp && \
 
 VOLUME ["/etc/instrumentation"]
 
-ENTRYPOINT
+ENTRYPOINT ["Instrumentation"]
