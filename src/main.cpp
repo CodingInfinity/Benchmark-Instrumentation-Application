@@ -53,7 +53,7 @@ com::codinginfinity::benchmark::management::thrift::messages::Heartbeat heartbea
 /**
  * Extract all information form the YAML file
  */
-YAML::Node config = YAML::LoadFile("../config.yaml");
+YAML::Node config = YAML::LoadFile("/etc/instrumentation/config.yaml");
 YAML::Node general = config["general"];
 YAML::Node technical = config["technical"];
 YAML::Node distro = technical["distro"];

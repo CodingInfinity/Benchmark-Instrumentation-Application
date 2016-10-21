@@ -46,7 +46,7 @@ RUN cd /tmp && \
 
 RUN cd /tmp && \
     git clone https://github.com/CodingInfinity/Benchmark-Instrumentation-Application && \
-    mkdir /tmp/Benchmark-Instrumentation-Application/x`cmake_build && \
+    mkdir /tmp/Benchmark-Instrumentation-Application/cmake_build && \
     cd /tmp/Benchmark-Instrumentation-Application/cmake_build && \
     cmake .. && \
     make all && \
@@ -54,3 +54,5 @@ RUN cd /tmp && \
     mkdir /etc/instrumentation
 
 VOLUME ["/etc/instrumentation"]
+
+ENTRYPOINT
